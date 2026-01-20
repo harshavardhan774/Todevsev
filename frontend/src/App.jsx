@@ -3,14 +3,19 @@ import axios from "axios";
 import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 
-const API = "http://localhost:5000/api/todos";
+// backend base url from environment
+const API = import.meta.env.VITE_API_URL + "/api/todos";
 
 function App() {
   const [todos, setTodos] = useState([]);
 
   const fetchTodos = async () => {
-    const res = await axios.get(API);
-    setTodos(res.data);
+    try {
+      const res = await axios.get(API);
+      setTodos(res.data);
+    } catch (err) {
+      console.error("Error fetching todos:", err);
+    }
   };
 
   useEffect(() => {
