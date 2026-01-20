@@ -50,11 +50,31 @@ pipeline {
                 sh 'docker build -t todo-frontend:1.0 ./frontend'
             }
         }
+
+        stage('Run Containers') {
+            steps {
+                echo 'Running backend and frontend containers...'
+                sh '''
+                docker rm -f todo-backend todo-frontend || true
+
+                docker run -d \
+                  --name todo-backend \
+                  -p 5000:5000 \
+                  todo-backend:1.0
+
+                docker run -d \
+                  --name todo-frontend \
+                  -p 80:80 \
+                  todo-frontend:1.0
+                '''
+            }
+        }
     }
 
     post {
         success {
             echo 'Pipeline completed successfully'
+            sh 'docker ps'
             sh 'docker images | grep todo || true'
         }
         failure {
